@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { loadDraft, saveDraft, STORAGE_KEY } from './storage';
-import { SoulDraft } from './model';
+import type { SoulDraft } from './model';
 
 const draft: SoulDraft = { identity: 'X', style: ['Be direct.'], avoid: [], defaults: [] };
 

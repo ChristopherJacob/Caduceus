@@ -1,4 +1,4 @@
-import { SoulDraft, EMPTY_DRAFT } from './model';
+import { EMPTY_DRAFT, type SoulDraft } from './model';
 
 export interface Preset {
   id: string;

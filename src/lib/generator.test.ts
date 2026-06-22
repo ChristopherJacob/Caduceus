@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateSoul } from './generator';
-import { SoulDraft } from './model';
+import type { SoulDraft } from './model';
 
 const base: SoulDraft = {
   identity: 'You are Hermes, a pragmatic engineer.',

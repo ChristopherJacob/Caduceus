@@ -1,4 +1,4 @@
-import { SoulDraft } from './model';
+import type { SoulDraft } from './model';
 
 export const STORAGE_KEY = 'soul-creator:draft';
 

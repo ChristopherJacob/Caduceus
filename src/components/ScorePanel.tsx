@@ -1,4 +1,4 @@
-import { SoulScore } from '../lib/scoring';
+import type { SoulScore } from '../lib/scoring';
 
 interface Props {
   result: SoulScore;

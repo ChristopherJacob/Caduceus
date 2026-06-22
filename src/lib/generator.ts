@@ -1,4 +1,4 @@
-import { SoulDraft, cleanLines } from './model';
+import { cleanLines, type SoulDraft } from './model';
 
 function bullets(items: string[] | undefined): string {
   return cleanLines(items).map((s) => `- ${s}`).join('\n');

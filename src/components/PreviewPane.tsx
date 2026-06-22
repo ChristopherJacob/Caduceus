@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { SoulDraft } from '../lib/model';
+import type { SoulDraft } from '../lib/model';
 import { generateSoul } from '../lib/generator';
 import { exportGate } from '../lib/scoring';
 

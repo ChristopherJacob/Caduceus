@@ -1,4 +1,4 @@
-import { SoulDraft, cleanLines } from './model';
+import { cleanLines, type SoulDraft } from './model';
 
 export interface CategoryScore {
   key: string;

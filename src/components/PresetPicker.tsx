@@ -1,5 +1,5 @@
 import { PRESETS } from '../lib/presets';
-import { SoulDraft } from '../lib/model';
+import type { SoulDraft } from '../lib/model';
 
 interface Props {
   onApply: (draft: SoulDraft) => void;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { scoreSoul, exportGate, findLeaks } from './scoring';
-import { SoulDraft, EMPTY_DRAFT } from './model';
+import { EMPTY_DRAFT, type SoulDraft } from './model';
 
 const strong: SoulDraft = {
   identity: 'You are Hermes, a pragmatic engineer who values clarity.',

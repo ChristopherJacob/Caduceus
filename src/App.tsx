@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { SoulDraft, EMPTY_DRAFT } from './lib/model';
+import { EMPTY_DRAFT, type SoulDraft } from './lib/model';
 import { scoreSoul } from './lib/scoring';
 import { loadDraft, saveDraft } from './lib/storage';
 import { BuilderForm } from './components/BuilderForm';

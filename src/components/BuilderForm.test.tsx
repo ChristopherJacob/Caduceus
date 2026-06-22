@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BuilderForm } from './BuilderForm';
-import { EMPTY_DRAFT, SoulDraft } from '../lib/model';
+import { EMPTY_DRAFT, type SoulDraft } from '../lib/model';
 
 // Realistic stateful host: BuilderForm is a controlled component, so visibility
 // of optional sections must be driven by the draft the parent feeds back.

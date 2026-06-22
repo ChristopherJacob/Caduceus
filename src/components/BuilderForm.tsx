@@ -1,4 +1,4 @@
-import { SoulDraft } from '../lib/model';
+import type { SoulDraft } from '../lib/model';
 import { ListEditor } from './ListEditor';
 
 interface Props {
