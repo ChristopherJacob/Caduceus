@@ -1,16 +1,17 @@
-import { PRESETS } from '../lib/presets';
-import type { SoulDraft } from '../lib/model';
+import type { Draft } from '../lib/model';
+import type { Preset } from '../lib/pack/schema';
 
 interface Props {
-  onApply: (draft: SoulDraft) => void;
+  presets: Preset[];
+  onApply: (draft: Draft) => void;
 }
 
-export function PresetPicker({ onApply }: Props) {
+export function PresetPicker({ presets, onApply }: Props) {
   return (
     <div className="presets">
-      {PRESETS.map((p) => (
+      {presets.map((p) => (
         <button key={p.id} type="button" className="preset" title={p.description}
-          onClick={() => onApply({ ...p.draft })}>
+          onClick={() => onApply(structuredClone(p.draft))}>
           {p.name}
         </button>
       ))}

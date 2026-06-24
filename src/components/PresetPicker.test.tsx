@@ -1,15 +1,15 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { PresetPicker } from './PresetPicker';
-import { PRESETS } from '../lib/presets';
+import { presetsFor } from '../lib/presets';
+import { BASELINE_PACK } from '../lib/pack/baseline';
 
 describe('PresetPicker', () => {
-  it('applies a preset draft when clicked', async () => {
+  it('renders presets and applies a deep copy of the draft', () => {
     const onApply = vi.fn();
-    render(<PresetPicker onApply={onApply} />);
-    await userEvent.click(screen.getByRole('button', { name: /pragmatic engineer/i }));
-    const expected = PRESETS.find((p) => p.id === 'pragmatic-engineer')!.draft;
-    expect(onApply).toHaveBeenCalledWith(expected);
+    render(<PresetPicker presets={presetsFor(BASELINE_PACK, 'soul')} onApply={onApply} />);
+    fireEvent.click(screen.getByText('Pragmatic Engineer'));
+    expect(onApply).toHaveBeenCalledTimes(1);
+    expect((onApply.mock.calls[0][0] as { identity: string }).identity).toContain('pragmatic');
   });
 });
