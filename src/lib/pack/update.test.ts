@@ -57,4 +57,11 @@ describe('checkForUpdate', () => {
     const out = await checkForUpdate({ ...base, fetch: fetchReturning({ latest: '2' }, null) });
     expect(out.kind).toBe('error');
   });
+
+  it('errors when the fetched pack body declares an unsupported schemaVersion', async () => {
+    const manifest = { latest: '2', schemaVersion: SUPPORTED_SCHEMA_VERSION, url: 'pack-2.json', publishedAt: 'x', summary: 's' };
+    const pack = { ...BASELINE_PACK, packVersion: '2', schemaVersion: SUPPORTED_SCHEMA_VERSION + 1 };
+    const out = await checkForUpdate({ ...base, fetch: fetchReturning(manifest, pack) });
+    expect(out.kind).toBe('error');
+  });
 });

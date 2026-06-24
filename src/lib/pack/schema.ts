@@ -113,7 +113,7 @@ export function validatePack(raw: unknown): Pack | null {
   if (typeof raw !== 'object' || raw === null) return null;
   const p = raw as Record<string, unknown>;
   if (typeof p.packVersion !== 'string') return null;
-  if (typeof p.schemaVersion !== 'number') return null;
+  if (typeof p.schemaVersion !== 'number' || p.schemaVersion > SUPPORTED_SCHEMA_VERSION) return null;
   if (typeof p.publishedAt !== 'string') return null;
   if (typeof p.summary !== 'string') return null;
   if (typeof p.docTypes !== 'object' || p.docTypes === null) return null;

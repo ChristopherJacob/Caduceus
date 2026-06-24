@@ -27,4 +27,8 @@ describe('validatePack', () => {
     expect(validatePack('nope')).toBeNull();
     expect(validatePack(null)).toBeNull();
   });
+
+  it('rejects a pack whose schemaVersion exceeds support', () => {
+    expect(validatePack({ ...minimalPack, schemaVersion: SUPPORTED_SCHEMA_VERSION + 1 })).toBeNull();
+  });
 });
