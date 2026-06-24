@@ -1,39 +1,25 @@
 import { describe, it, expect } from 'vitest';
-import { generateSoul } from './generator';
-import type { SoulDraft } from './model';
+import { generate } from './generator';
+import type { SectionDef } from './pack/schema';
 
-const base: SoulDraft = {
-  identity: 'You are Hermes, a pragmatic engineer.',
-  style: ['Be direct.', '  '],
-  avoid: ['Avoid hype language.'],
-  defaults: ['When ambiguous, ask one clarifying question.'],
-};
+const sections: SectionDef[] = [
+  { id: 'identity', heading: 'Personality', level: 1, kind: 'text', optional: false, placeholder: '' },
+  { id: 'style', heading: 'Style', level: 2, kind: 'list', optional: false, placeholder: '' },
+  { id: 'examples', heading: 'Examples', level: 2, kind: 'list', optional: true, placeholder: '' },
+];
 
-describe('generateSoul', () => {
-  it('emits canonical headings and bullets, dropping empty lines', () => {
-    const out = generateSoul(base);
-    expect(out).toContain('# Personality\nYou are Hermes, a pragmatic engineer.');
-    expect(out).toContain('## Style\n- Be direct.');
-    expect(out).toContain('## What to avoid\n- Avoid hype language.');
-    expect(out).toContain('## Defaults\n- When ambiguous, ask one clarifying question.');
-    expect(out).not.toContain('- \n');
-    expect(out.endsWith('\n')).toBe(true);
+describe('generate', () => {
+  it('emits H1 for level-1 text and H2 bullet lists, omitting empty sections', () => {
+    const md = generate(sections, { identity: 'I am Hermes.', style: ['Be direct.', ' '], examples: [] });
+    expect(md).toBe('# Personality\nI am Hermes.\n\n## Style\n- Be direct.\n');
   });
 
-  it('omits sections with no content', () => {
-    const out = generateSoul({ identity: 'X', style: [], avoid: [], defaults: [] });
-    expect(out).toContain('# Personality\nX');
-    expect(out).not.toContain('## Style');
-    expect(out).not.toContain('## What to avoid');
+  it('trims and ends with a single trailing newline', () => {
+    const md = generate(sections, { identity: '  hi  ', style: [] });
+    expect(md).toBe('# Personality\nhi\n');
   });
 
-  it('includes optional domain posture and examples when present', () => {
-    const out = generateSoul({
-      ...base,
-      domainPosture: { title: 'Code Review', lines: ['Prioritize correctness.'] },
-      examples: ['Say when something is a bad idea.'],
-    });
-    expect(out).toContain('## Code Review\n- Prioritize correctness.');
-    expect(out).toContain('## Examples\n- Say when something is a bad idea.');
+  it('returns just a newline for a fully empty draft', () => {
+    expect(generate(sections, { identity: '', style: [] })).toBe('\n');
   });
 });

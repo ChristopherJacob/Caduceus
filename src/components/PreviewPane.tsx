@@ -1,16 +1,20 @@
 import { useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import type { SoulDraft } from '../lib/model';
-import { generateSoul } from '../lib/generator';
-import { exportGate } from '../lib/scoring';
+import type { Draft } from '../lib/model';
+import type { SectionDef, GateRule } from '../lib/pack/schema';
+import { generate } from '../lib/generator';
+import { evaluateGate } from '../lib/pack/engine';
 
 interface Props {
-  draft: SoulDraft;
+  sections: SectionDef[];
+  gate: GateRule[];
+  draft: Draft;
+  filename: string;
 }
 
-export function PreviewPane({ draft }: Props) {
-  const markdown = useMemo(() => generateSoul(draft), [draft]);
-  const gate = useMemo(() => exportGate(draft), [draft]);
+export function PreviewPane({ sections, gate, draft, filename }: Props) {
+  const markdown = useMemo(() => generate(sections, draft), [sections, draft]);
+  const result = useMemo(() => evaluateGate(gate, draft, sections), [gate, draft, sections]);
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -24,7 +28,7 @@ export function PreviewPane({ draft }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'SOUL.md';
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -32,25 +36,16 @@ export function PreviewPane({ draft }: Props) {
   return (
     <div className="preview-pane">
       <div className="export-bar">
-        <button type="button" onClick={copy} disabled={!gate.ok}>
-          {copied ? 'Copied!' : 'Copy'}
-        </button>
-        <button type="button" onClick={download} disabled={!gate.ok}>
-          Download SOUL.md
-        </button>
+        <button type="button" onClick={copy} disabled={!result.ok}>{copied ? 'Copied!' : 'Copy'}</button>
+        <button type="button" onClick={download} disabled={!result.ok}>Download {filename}</button>
       </div>
-      {!gate.ok && (
+      {!result.ok && (
         <ul className="gate-reasons">
-          {gate.reasons.map((r, i) => <li key={i}>{r}</li>)}
+          {result.reasons.map((r, i) => <li key={i}>{r}</li>)}
         </ul>
       )}
-      <div className="preview-markdown">
-        <ReactMarkdown>{markdown}</ReactMarkdown>
-      </div>
-      <details className="preview-raw">
-        <summary>Raw Markdown</summary>
-        <pre>{markdown}</pre>
-      </details>
+      <div className="preview-markdown"><ReactMarkdown>{markdown}</ReactMarkdown></div>
+      <details className="preview-raw"><summary>Raw Markdown</summary><pre>{markdown}</pre></details>
     </div>
   );
 }

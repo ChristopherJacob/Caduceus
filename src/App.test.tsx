@@ -1,17 +1,42 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App from './App';
 
-describe('App', () => {
-  beforeEach(() => localStorage.clear());
+beforeEach(() => {
+  localStorage.clear();
+  vi.stubGlobal('fetch', vi.fn(async (url: string | URL | Request) =>
+    String(url).endsWith('manifest.json')
+      ? ({ ok: true, status: 200, json: async () => ({ latest: '1', schemaVersion: 2, url: 'pack-1.json', publishedAt: 'x', summary: 's' }) } as Response)
+      : ({ ok: false, status: 404, json: async () => ({}) } as Response),
+  ));
+});
 
-  it('applies a preset and reflects it in score and preview', async () => {
+afterEach(() => vi.unstubAllGlobals());
+
+describe('App', () => {
+  it('renders the SOUL builder and updates the live score when a preset is applied', () => {
     render(<App />);
-    await userEvent.click(screen.getByRole('button', { name: /pragmatic engineer/i }));
-    // export becomes enabled once a strong preset is loaded
-    expect(screen.getByRole('button', { name: /download soul\.md/i })).toBeEnabled();
-    // preview shows the identity heading text
-    expect(screen.getAllByText(/pragmatic/i).length).toBeGreaterThan(0);
+    expect(screen.getByText('SOUL Creator')).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument(); // empty score
+    fireEvent.click(screen.getByText('Pragmatic Engineer'));
+    expect(screen.getByText('100')).toBeInTheDocument();
+  });
+
+  it('switches to the AGENTS tab and shows its sections', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('tab', { name: 'AGENTS.md' }));
+    expect(screen.getByText('Project overview')).toBeInTheDocument();
+    expect(screen.getByText('Setup & commands')).toBeInTheDocument();
+  });
+
+  it('reverts to the bundled pack when a non-bundled pack is active', async () => {
+    const { saveActivePack } = await import('./lib/storage');
+    const { BASELINE_PACK } = await import('./lib/pack/baseline');
+    saveActivePack({ ...BASELINE_PACK, packVersion: '99', summary: 'newer' });
+    render(<App />);
+    // indicator shows the active (non-bundled) version
+    expect(screen.getByText(/pack v99/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /revert to bundled/i }));
+    expect(screen.getByText(/pack v1/)).toBeInTheDocument();
   });
 });
