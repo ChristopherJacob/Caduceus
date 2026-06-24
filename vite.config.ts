@@ -10,11 +10,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons/icon-192.png', 'icons/icon-512.png'],
+      includeAssets: ['favicon.png', 'apple-touch-icon.png', 'logo.png', 'icons/icon-192.png', 'icons/icon-512.png'],
       manifest: {
-        name: 'SOUL Creator',
-        short_name: 'SOUL',
-        description: 'Author best-of-breed SOUL.md and AGENTS.md files for Hermes agents.',
+        name: 'Caduceus — SOUL.md & AGENTS.md authoring',
+        short_name: 'Caduceus',
+        description: 'Author best-of-breed SOUL.md and AGENTS.md files for Hermes agents. Identity and instructions, in balance.',
         theme_color: '#0e0b1e',
         background_color: '#0e0b1e',
         display: 'standalone',

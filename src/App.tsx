@@ -107,7 +107,13 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>SOUL Creator</h1>
+        <div className="brand">
+          <img className="brand-logo" src={`${import.meta.env.BASE_URL}logo.png`} alt="" width={72} height={72} />
+          <div className="brand-text">
+            <h1>Caduceus</h1>
+            <p className="tagline">Identity and instructions, in balance.</p>
+          </div>
+        </div>
         <p>{docType.blurb}</p>
         <p className="pack-indicator">
           {navigator.onLine ? 'online' : 'offline'} · pack v{pack.packVersion}
