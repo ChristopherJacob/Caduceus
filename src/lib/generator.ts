@@ -1,30 +1,24 @@
-import { cleanLines, type SoulDraft } from './model';
+import { cleanLines } from './model';
+import type { Draft } from './model';
+import type { SectionDef } from './pack/schema';
 
-function bullets(items: string[] | undefined): string {
-  return cleanLines(items).map((s) => `- ${s}`).join('\n');
-}
+function sectionMarkdown(def: SectionDef, draft: Draft): string | null {
+  const hashes = def.level === 1 ? '#' : '##';
+  const value = draft[def.id];
 
-export function generateSoul(draft: SoulDraft): string {
-  const blocks: string[] = [];
-  blocks.push(`# Personality\n${draft.identity.trim()}`);
-
-  const style = bullets(draft.style);
-  if (style) blocks.push(`## Style\n${style}`);
-
-  const avoid = bullets(draft.avoid);
-  if (avoid) blocks.push(`## What to avoid\n${avoid}`);
-
-  const defaults = bullets(draft.defaults);
-  if (defaults) blocks.push(`## Defaults\n${defaults}`);
-
-  if (draft.domainPosture) {
-    const title = draft.domainPosture.title.trim();
-    const lines = bullets(draft.domainPosture.lines);
-    if (title && lines) blocks.push(`## ${title}\n${lines}`);
+  if (def.kind === 'text') {
+    const text = typeof value === 'string' ? value.trim() : '';
+    return text ? `${hashes} ${def.heading}\n${text}` : null;
   }
 
-  const examples = bullets(draft.examples);
-  if (examples) blocks.push(`## Examples\n${examples}`);
+  const items = cleanLines(Array.isArray(value) ? value : undefined);
+  if (items.length === 0) return null;
+  return `${hashes} ${def.heading}\n${items.map((s) => `- ${s}`).join('\n')}`;
+}
 
+export function generate(sections: SectionDef[], draft: Draft): string {
+  const blocks = sections
+    .map((def) => sectionMarkdown(def, draft))
+    .filter((b): b is string => b !== null);
   return blocks.join('\n\n') + '\n';
 }
