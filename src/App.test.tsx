@@ -28,4 +28,15 @@ describe('App', () => {
     expect(screen.getByText('Project overview')).toBeInTheDocument();
     expect(screen.getByText('Setup & commands')).toBeInTheDocument();
   });
+
+  it('reverts to the bundled pack when a non-bundled pack is active', async () => {
+    const { saveActivePack } = await import('./lib/storage');
+    const { BASELINE_PACK } = await import('./lib/pack/baseline');
+    saveActivePack({ ...BASELINE_PACK, packVersion: '99', summary: 'newer' });
+    render(<App />);
+    // indicator shows the active (non-bundled) version
+    expect(screen.getByText(/pack v99/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /revert to bundled/i }));
+    expect(screen.getByText(/pack v1/)).toBeInTheDocument();
+  });
 });

@@ -91,6 +91,13 @@ export default function App() {
 
   const dismissUpdate = useCallback(() => setBanner({ kind: 'none' }), []);
 
+  const revertToBundled = useCallback(() => {
+    saveActivePack(BASELINE_PACK);
+    clearAvailablePack();
+    setPack(BASELINE_PACK);
+    setBanner({ kind: 'none' });
+  }, []);
+
   const handleMoveLeaks = () => {
     const moved = moveLeaksToAgents(drafts.soul, drafts.agents, pack.docTypes.soul.sections);
     setDrafts({ soul: moved.soul, agents: moved.agents });
@@ -104,6 +111,11 @@ export default function App() {
         <p>{docType.blurb}</p>
         <p className="pack-indicator">
           {navigator.onLine ? 'online' : 'offline'} · pack v{pack.packVersion}
+          {pack.packVersion !== BASELINE_PACK.packVersion && (
+            <button type="button" className="revert-pack" onClick={revertToBundled}>
+              Revert to bundled (v{BASELINE_PACK.packVersion})
+            </button>
+          )}
         </p>
       </header>
 
