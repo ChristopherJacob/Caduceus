@@ -1,7 +1,9 @@
-import type { SoulScore } from '../lib/scoring';
+import type { DraftScore } from '../lib/pack/engine';
 
 interface Props {
-  result: SoulScore;
+  result: DraftScore;
+  /** When provided, sub-max categories that carry leak hits get a move button. */
+  onMoveLeaks?: () => void;
 }
 
 function tier(score: number): string {
@@ -10,7 +12,7 @@ function tier(score: number): string {
   return 'weak';
 }
 
-export function ScorePanel({ result }: Props) {
+export function ScorePanel({ result, onMoveLeaks }: Props) {
   return (
     <div className={`score-panel tier-${tier(result.score)}`}>
       <div className="score-gauge">
@@ -25,9 +27,14 @@ export function ScorePanel({ result }: Props) {
               <span className="score-row-value">{c.score}/{c.max}</span>
             </div>
             <div className="score-bar">
-              <div className="score-bar-fill" style={{ width: `${(c.score / c.max) * 100}%` }} />
+              <div className="score-bar-fill" style={{ width: `${c.max > 0 ? (c.score / c.max) * 100 : 0}%` }} />
             </div>
             {c.score < c.max && <p className="score-tip">{c.tip}</p>}
+            {onMoveLeaks && c.hits && c.hits.length > 0 && (
+              <button type="button" className="move-leaks" onClick={onMoveLeaks}>
+                Move to AGENTS.md
+              </button>
+            )}
           </li>
         ))}
       </ul>
