@@ -2,6 +2,9 @@ import { cleanLines } from './model';
 import type { Draft } from './model';
 import type { SectionDef } from './pack/schema';
 
+// These mirror the SOUL portability LEAK patterns in pack/baseline.ts. crossTab is
+// bundled code and cannot safely read pack-supplied regexes, so if the pack's leak
+// patterns change, update these in tandem.
 const COMMAND_RE = /\b(npm|npx|yarn|pnpm|pip|pytest|git|docker|make|cargo|go run|curl)\b/i;
 const PATH_RE = /(\.{0,2}\/)?[\w-]+\/[\w./-]+/;
 const PORT_RE = /:\d{2,5}\b/;

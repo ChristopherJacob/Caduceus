@@ -21,9 +21,21 @@ describe('ScorePanel', () => {
 
   it('offers the move action when hits + callback present', () => {
     const onMove = vi.fn();
-    render(<ScorePanel result={result} onMoveLeaks={onMove} />);
+    render(<ScorePanel result={result} onMoveLeaks={onMove} moveLeaksKey="portability" />);
     fireEvent.click(screen.getByText('Move to AGENTS.md'));
     expect(onMove).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not offer the move action on a category whose key is not moveLeaksKey', () => {
+    const onMove = vi.fn();
+    const withHype: DraftScore = {
+      score: 40,
+      categories: [
+        { key: 'noHype', label: 'No hype', score: 4, max: 8, tip: 'Remove hype.', hits: ['fast'] },
+      ],
+    };
+    render(<ScorePanel result={withHype} onMoveLeaks={onMove} moveLeaksKey="portability" />);
+    expect(screen.queryByText('Move to AGENTS.md')).toBeNull();
   });
 
   it('does not produce NaN width when a category max is 0', () => {

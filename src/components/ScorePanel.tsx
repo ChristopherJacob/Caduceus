@@ -4,6 +4,8 @@ interface Props {
   result: DraftScore;
   /** When provided, sub-max categories that carry leak hits get a move button. */
   onMoveLeaks?: () => void;
+  /** Only the category with this key shows the move button. */
+  moveLeaksKey?: string;
 }
 
 function tier(score: number): string {
@@ -12,7 +14,7 @@ function tier(score: number): string {
   return 'weak';
 }
 
-export function ScorePanel({ result, onMoveLeaks }: Props) {
+export function ScorePanel({ result, onMoveLeaks, moveLeaksKey }: Props) {
   return (
     <div className={`score-panel tier-${tier(result.score)}`}>
       <div className="score-gauge">
@@ -30,7 +32,7 @@ export function ScorePanel({ result, onMoveLeaks }: Props) {
               <div className="score-bar-fill" style={{ width: `${c.max > 0 ? (c.score / c.max) * 100 : 0}%` }} />
             </div>
             {c.score < c.max && <p className="score-tip">{c.tip}</p>}
-            {onMoveLeaks && c.hits && c.hits.length > 0 && (
+            {onMoveLeaks && c.key === moveLeaksKey && c.hits && c.hits.length > 0 && (
               <button type="button" className="move-leaks" onClick={onMoveLeaks}>
                 Move to AGENTS.md
               </button>

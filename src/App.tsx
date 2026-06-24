@@ -129,7 +129,7 @@ export default function App() {
         </section>
         <section className="pane pane-right">
           <PreviewPane sections={docPack.sections} gate={docPack.gate} draft={draft} filename={docType.filename} />
-          <ScorePanel result={score} onMoveLeaks={active === 'soul' ? handleMoveLeaks : undefined} />
+          <ScorePanel result={score} onMoveLeaks={active === 'soul' ? handleMoveLeaks : undefined} moveLeaksKey="portability" />
         </section>
       </main>
 
