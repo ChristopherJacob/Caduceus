@@ -4,9 +4,12 @@ import { scoreDraft } from './lib/pack/engine';
 import { presetsFor } from './lib/presets';
 import { BASELINE_PACK } from './lib/pack/baseline';
 import { docTypeById } from './lib/docTypes';
+import type { DocId } from './lib/pack/schema';
 import {
   loadDraft, saveDraft, loadActivePack, migrateLegacyDraft,
+  loadActiveTab, saveActiveTab,
 } from './lib/storage';
+import { TabBar } from './components/TabBar';
 import { BuilderForm } from './components/BuilderForm';
 import { PresetPicker } from './components/PresetPicker';
 import { ScorePanel } from './components/ScorePanel';
@@ -15,13 +18,21 @@ import './App.css';
 
 export default function App() {
   const pack = useMemo(() => loadActivePack() ?? BASELINE_PACK, []);
-  const docType = docTypeById('soul');
-  const docPack = pack.docTypes.soul;
+  const [active, setActive] = useState<DocId>(() => loadActiveTab() ?? 'soul');
 
-  const [draft, setDraft] = useState<Draft>(() => {
+  const [drafts, setDrafts] = useState<Record<DocId, Draft>>(() => {
     migrateLegacyDraft();
-    return loadDraft('soul') ?? emptyDraft(docPack.sections);
+    return {
+      soul: loadDraft('soul') ?? emptyDraft(pack.docTypes.soul.sections),
+      agents: loadDraft('agents') ?? emptyDraft(pack.docTypes.agents.sections),
+    };
   });
+
+  const docType = docTypeById(active);
+  const docPack = pack.docTypes[active];
+  const draft = drafts[active];
+
+  const setDraft = (next: Draft) => setDrafts((prev) => ({ ...prev, [active]: next }));
 
   const score = useMemo(
     () => scoreDraft(docPack.rubric, draft, docPack.sections),
@@ -29,9 +40,14 @@ export default function App() {
   );
 
   useEffect(() => {
-    const id = setTimeout(() => saveDraft('soul', draft), 300);
+    const id = setTimeout(() => saveDraft(active, draft), 300);
     return () => clearTimeout(id);
-  }, [draft]);
+  }, [active, draft]);
+
+  const selectTab = (id: DocId) => {
+    setActive(id);
+    saveActiveTab(id);
+  };
 
   return (
     <div className="app">
@@ -40,7 +56,8 @@ export default function App() {
         <p>{docType.blurb}</p>
       </header>
 
-      <PresetPicker presets={presetsFor(pack, 'soul')} onApply={setDraft} />
+      <TabBar active={active} onSelect={selectTab} />
+      <PresetPicker presets={presetsFor(pack, active)} onApply={setDraft} />
 
       <main className="panes">
         <section className="pane pane-left">
@@ -53,7 +70,7 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        Place the result at <code>~/.hermes/SOUL.md</code>. Project-specific rules belong in <code>AGENTS.md</code>.
+        <code>SOUL.md</code> → <code>~/.hermes/SOUL.md</code> (identity). <code>AGENTS.md</code> → your repo root (project rules).
       </footer>
     </div>
   );

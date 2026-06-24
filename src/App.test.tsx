@@ -12,4 +12,11 @@ describe('App', () => {
     fireEvent.click(screen.getByText('Pragmatic Engineer'));
     expect(screen.getByText('100')).toBeInTheDocument();
   });
+
+  it('switches to the AGENTS tab and shows its sections', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('tab', { name: 'AGENTS.md' }));
+    expect(screen.getByText('Project overview')).toBeInTheDocument();
+    expect(screen.getByText('Setup & commands')).toBeInTheDocument();
+  });
 });
