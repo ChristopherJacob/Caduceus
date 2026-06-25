@@ -1,5 +1,5 @@
 import type { Draft } from './model';
-import type { SectionDef } from './pack/schema';
+import type { DocId, SectionDef } from './pack/schema';
 
 export interface Block {
   heading: string;
@@ -56,4 +56,46 @@ export function parseForDoc(
   }
 
   return { draft, unmatched };
+}
+
+export interface ParseResult {
+  docId: DocId;
+  draft: Draft;
+  unmatched: { heading: string; body: string }[];
+  detection: 'confident' | 'fallback';
+}
+
+function countHeadingMatches(blocks: Block[], sections: SectionDef[]): number {
+  const set = new Set(sections.map((s) => s.heading.trim().toLowerCase()));
+  return blocks.filter((b) => set.has(b.heading.trim().toLowerCase())).length;
+}
+
+/**
+ * Parse arbitrary Markdown into a draft. Detects the doc type by canonical
+ * heading matches; on a tie or zero matches, falls back to `activeTab`.
+ */
+export function parseMarkdown(
+  markdown: string,
+  activeTab: DocId,
+  sectionsByDoc: Record<DocId, SectionDef[]>,
+): ParseResult {
+  const blocks = splitBlocks(markdown);
+  const soul = countHeadingMatches(blocks, sectionsByDoc.soul);
+  const agents = countHeadingMatches(blocks, sectionsByDoc.agents);
+
+  let docId: DocId;
+  let detection: 'confident' | 'fallback';
+  if (soul > agents && soul >= 1) {
+    docId = 'soul';
+    detection = 'confident';
+  } else if (agents > soul && agents >= 1) {
+    docId = 'agents';
+    detection = 'confident';
+  } else {
+    docId = activeTab;
+    detection = 'fallback';
+  }
+
+  const { draft, unmatched } = parseForDoc(blocks, sectionsByDoc[docId]);
+  return { docId, draft, unmatched, detection };
 }
