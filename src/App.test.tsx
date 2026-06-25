@@ -60,6 +60,6 @@ describe('App', () => {
     // indicator shows the active (non-bundled) version
     expect(screen.getByText(/pack v99/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /revert to bundled/i }));
-    expect(screen.getByText(/pack v1/)).toBeInTheDocument();
+    expect(screen.getByText(/pack v2/)).toBeInTheDocument();
   });
 });

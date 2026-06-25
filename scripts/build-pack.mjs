@@ -3,15 +3,20 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { BASELINE_PACK } from '../src/lib/pack/baseline.ts';
 
+const version = BASELINE_PACK.packVersion;
+const file = `pack-${version}.json`;
+
 mkdirSync('public/packs', { recursive: true });
-writeFileSync('public/packs/pack-1.json', JSON.stringify(BASELINE_PACK, null, 2) + '\n');
+// Write the current version's pack file. Prior versions (e.g. pack-1.json) are
+// left untouched so old clients can still fetch the exact pack they shipped with.
+writeFileSync(`public/packs/${file}`, JSON.stringify(BASELINE_PACK, null, 2) + '\n');
 writeFileSync(
   'public/packs/manifest.json',
   JSON.stringify(
     {
-      latest: BASELINE_PACK.packVersion,
+      latest: version,
       schemaVersion: BASELINE_PACK.schemaVersion,
-      url: 'pack-1.json',
+      url: file,
       publishedAt: BASELINE_PACK.publishedAt,
       summary: BASELINE_PACK.summary,
     },
@@ -19,4 +24,4 @@ writeFileSync(
     2,
   ) + '\n',
 );
-console.log('wrote public/packs/{manifest,pack-1}.json');
+console.log(`wrote public/packs/{manifest,${file.replace('.json', '')}}.json`);
