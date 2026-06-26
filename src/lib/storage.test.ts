@@ -19,9 +19,9 @@ describe('storage', () => {
 
   it('round-trips active/available pack and active tab', () => {
     saveActivePack(BASELINE_PACK);
-    expect(loadActivePack()?.packVersion).toBe('1');
+    expect(loadActivePack()?.packVersion).toBe(BASELINE_PACK.packVersion);
     saveAvailablePack(BASELINE_PACK);
-    expect(loadAvailablePack()?.packVersion).toBe('1');
+    expect(loadAvailablePack()?.packVersion).toBe(BASELINE_PACK.packVersion);
     clearAvailablePack();
     expect(loadAvailablePack()).toBeNull();
     saveActiveTab('agents');
