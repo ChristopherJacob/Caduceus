@@ -22,6 +22,13 @@ describe('App', () => {
     expect(screen.getByText('100')).toBeInTheDocument();
   });
 
+  it('links to the source repository in the footer', () => {
+    render(<App />);
+    const link = screen.getByRole('link', { name: /Caduceus on GitHub/i });
+    expect(link).toHaveAttribute('href', 'https://github.com/ChristopherJacob/Caduceus');
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+  });
+
   it('switches to the AGENTS tab and shows its sections', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('tab', { name: 'AGENTS.md' }));
