@@ -59,6 +59,9 @@
 .score-tip { color: var(--muted); font-size: 12px; margin: 2px 0 0; }
 
 .app-footer { color: var(--muted); font-size: 13px; margin-top: 28px; text-align: center; }
+.app-footer p { margin: 4px 0; }
+.repo-link { color: var(--accent); text-decoration: none; }
+.repo-link:hover { text-decoration: underline; }
 
 /* Tab bar */
 .tab-bar { display: flex; gap: 0.25rem; margin: 0 0 1rem; }

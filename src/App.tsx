@@ -8,7 +8,7 @@ import { BASELINE_PACK } from './lib/pack/baseline';
 import { docTypeById } from './lib/docTypes';
 import type { DocId, Pack } from './lib/pack/schema';
 import { checkForUpdate } from './lib/pack/update';
-import { PACK_BASE_URL } from './lib/config';
+import { PACK_BASE_URL, REPO_URL } from './lib/config';
 import {
   loadDraft, saveDraft, loadActivePack, migrateLegacyDraft,
   loadActiveTab, saveActiveTab,
@@ -211,7 +211,12 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <code>SOUL.md</code> → <code>~/.hermes/SOUL.md</code> (identity). <code>AGENTS.md</code> → your repo root (project rules).
+        <p><code>SOUL.md</code> → <code>~/.hermes/SOUL.md</code> (identity). <code>AGENTS.md</code> → your repo root (project rules).</p>
+        <p>
+          <a className="repo-link" href={REPO_URL} target="_blank" rel="noopener noreferrer">
+            Caduceus on GitHub
+          </a>
+        </p>
       </footer>
     </div>
   );
